@@ -20,7 +20,8 @@ public class Item : MonoBehaviour
     {
         if(other.tag == "Player")
         {
-            print("Collect Item");
+            Plane plae = other.GetComponent<Plane>();
+
         } 
     }
 }

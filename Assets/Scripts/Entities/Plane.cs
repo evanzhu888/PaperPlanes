@@ -11,6 +11,8 @@ public class Plane : Entity
 
 	public Aerodynamic aerodynamics;
 
+	public bool hasShield;
+
 
     // Use this for initialization
     void Start 	() {
