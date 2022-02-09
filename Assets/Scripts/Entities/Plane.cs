@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class Plane : Entity
 {
-//private Rigidbody2D rb;
 
 	public PlaneController controller;
 
@@ -21,7 +20,7 @@ public class Plane : Entity
 
 		rb = GetComponent<Rigidbody2D>();
 		rb.inertia = aerodynamics.inertia;
-		rb.velocity = new Vector2(4, -1);
+		rb.velocity = new Vector2(4, 1);
 	}
 
 	// Called once per frame
@@ -29,10 +28,27 @@ public class Plane : Entity
 
 		Camera cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
 		
-		//if the plane is below the screen it dies
+		// if the plane is below the screen it dies
+		// else if too high push back down
 		if (transform.position.y < 0) {
 			die();
+		} else if (transform.position.y > 22) {
+			rb.AddForce(new Vector2(0, -5));
+
+			if (rb.rotation > 35) {
+				rb.rotation -= 2;
+			} else if (rb.rotation < -70) {
+				rb.rotation += 6;
+			}
+
+			if (rb.angularVelocity < -60) {
+				rb.angularVelocity += 2;
+			}
+			print("y: " + transform.position.y);
+			print("rotation: " + rb.rotation);
+			print("angular: " + rb.angularVelocity);
 		}
+
         // Body frame velocity
 		aerodynamics.bodyVelocity = transform.InverseTransformVector(rb.velocity);
 
@@ -75,6 +91,26 @@ public class Plane : Entity
 		//die and respawn
 		// SceneManager.LoadScene("SampleScene"); 
 		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+	}
+
+	// Add collider for plane usually collision with obstacles to play death animations
+	public void OnCollisionEnter2D(Collision2D other) 
+	{
+		// Check if collision is with Tree object
+		if (other.collider.gameObject.CompareTag("Tree"))
+		{
+			// Call death method to respawn
+			// TODO: Add an animation after collision before respawn for 
+			//       better playability
+			die();
+		}
+		if (other.collider.gameObject.CompareTag("Water"))
+		{
+			// Call death method to respawn
+			// TODO: Add an animation after collision before respawn for 
+			//       better playability
+			die();
+		}
 	}
 
 }
